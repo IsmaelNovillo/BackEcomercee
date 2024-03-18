@@ -36,8 +36,10 @@ public class SecurityConfig {
         return  httpSecurity//video 1 con las explicaciones deall
                 .csrf(config->config.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/hello").permitAll();
+                    auth.requestMatchers("/inicio").permitAll();
                     auth.requestMatchers("/create").permitAll();
+                    auth.requestMatchers("/verify-account").permitAll();
+                    auth.requestMatchers("/reset-password").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session->{
