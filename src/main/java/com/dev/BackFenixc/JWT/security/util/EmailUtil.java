@@ -38,10 +38,11 @@ public class EmailUtil {
         mimeMessageHelper.setSubject("Reset Password");
         mimeMessageHelper.setText("""
         <div>
-          <a href="http://localhost:8080/verify-account?email=%s&password=%s" target="_blank">click link to verify</a>
+          <a href="http://localhost:8080/reset-password?email=%s&password=%s" target="_blank">click link to verify</a>
         </div>
         """.formatted(email, password), true);
 
         javaMailSender.send(mimeMessage);
     }
+
 }

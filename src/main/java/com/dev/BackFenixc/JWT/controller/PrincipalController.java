@@ -7,6 +7,7 @@ import com.dev.BackFenixc.JWT.models.UserEntity;
 import com.dev.BackFenixc.JWT.repositories.UserRepository;
 import com.dev.BackFenixc.JWT.security.util.EmailUtil;
 import com.dev.BackFenixc.JWT.security.util.OtpUtil;
+import com.dev.BackFenixc.JWT.security.util.ResetUtil;
 import jakarta.validation.Valid;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,16 +82,29 @@ public class PrincipalController {
         return "Tiempo excedido del codigo, generelo otra vez ";
     }
 
-    //corregir reset password 
-    @PutMapping("/reset-password")
-    public String resetPassword (String email, @Valid @RequestBody CreateUserDTO createUserDTO){
+    @GetMapping("/reset-password")
+    public String resetPass (@Valid @RequestBody ResetUtil resetUtil){
+
         try{
-            emailUtil.sendOtpEmail(createUserDTO.getEmail(),);
+            emailUtil.sendPassword(resetUtil.getEmail(), resetUtil.getPassword());
         } catch (jakarta.mail.MessagingException e) {
-            throw new RuntimeException("No se genero codigo de activacion"+e);
+            throw new RuntimeException("No se genero codigo de restablecimiento de contraseña"+e);
         }
 
-        return "Intentalo nuevamente";
+        return "correo enviado";
+    }
+
+    @PutMapping("/reset-password")
+    public String resetPassword (String email, @RequestBody ResetUtil resetUtil){
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(
+                ()-> new RuntimeException("Este usuario "+ email+ " no se encontro")
+        );
+        if (userEntity.isActive()){
+            userEntity.setPassword(resetUtil.getPassword());
+            userRepository.save(userEntity);
+            return "Contraseña actualizada correctamente";
+        }
+        return "Tiempo excedido del codigo, generelo otra vez ";
     }
 
     @DeleteMapping("/deleteUser")
