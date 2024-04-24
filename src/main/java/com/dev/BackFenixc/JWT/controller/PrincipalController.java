@@ -82,11 +82,13 @@ public class PrincipalController {
         return "Tiempo excedido del codigo, generelo otra vez ";
     }
 
-    @GetMapping("/reset-password")
+    @PostMapping("/send-reset")
     public String resetPass (@Valid @RequestBody ResetUtil resetUtil){
-
+        UserEntity userEntity = userRepository.findByEmail(resetUtil.getEmail()).orElseThrow(
+                ()-> new RuntimeException("Este usuario "+ resetUtil.getEmail()+ " no se encontro")
+        );
         try{
-            emailUtil.sendPassword(resetUtil.getEmail(), resetUtil.getPassword());
+            emailUtil.sendPassword(userEntity.getEmail(), userEntity.getPassword());
         } catch (jakarta.mail.MessagingException e) {
             throw new RuntimeException("No se genero codigo de restablecimiento de contraseña"+e);
         }
@@ -94,7 +96,7 @@ public class PrincipalController {
         return "correo enviado";
     }
 
-    @PutMapping("/reset-password")
+    @PostMapping("/reset-password")
     public String resetPassword (String email, @RequestBody ResetUtil resetUtil){
         UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(
                 ()-> new RuntimeException("Este usuario "+ email+ " no se encontro")

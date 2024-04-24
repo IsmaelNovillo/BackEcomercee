@@ -40,6 +40,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/create").permitAll();
                     auth.requestMatchers("/verify-account").permitAll();
                     auth.requestMatchers("/reset-password").permitAll();
+                    auth.requestMatchers("/send-reset").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session->{
